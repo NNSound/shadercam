@@ -12,30 +12,25 @@ import com.androidexperiments.shadercam.gl.CameraRenderer
  * implementation of ShaderCam, with sliders
  */
 class MeetupActivity : SimpleShaderActivity(), SeekBar.OnSeekBarChangeListener {
-    private var mMyRenderer: SuperAwesomeRenderer? = null
-    private var mSeekbar: SeekBar? = null
+    lateinit var mMyRenderer: SuperAwesomeRenderer
+    lateinit var mSeekbar: SeekBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mSeekbar = findViewById(R.id.seek_bar) as SeekBar
-        mSeekbar!!.setOnSeekBarChangeListener(this)
+        mSeekbar.setOnSeekBarChangeListener(this)
     }
 
-    /**
-     * 好吧我可能用很爛的解法來處理kotlin呼叫的問題
-     * 我不確定正確呼叫的方式是麼
-     * 這個寫法只是能夠編譯 需要動到fun的時候還是會crash
-     * */
-    override fun getRenderer(surface: SurfaceTexture, width: Int, height: Int): CameraRenderer {
-        var mMyRenderer = SuperAwesomeRenderer(this, surface, width, height)
-        //var mMyRenderer = new SuperAwesomeRenderer(this, surface, width, height) how can i do this?
 
+    override fun getRenderer(surface: SurfaceTexture, width: Int, height: Int): CameraRenderer {
+        mMyRenderer = SuperAwesomeRenderer(this, surface, width, height)
+        //mMyRenderer = new SuperAwesomeRenderer(this, surface, width, height) how can i do this?
         return mMyRenderer
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-        mMyRenderer!!.setTileAmount(map(progress.toFloat(), 0f, 100f, 0.1f, 1.9f))
+        mMyRenderer.setTileAmount(map(progress.toFloat(), 0f, 100f, 0.1f, 1.9f))
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
