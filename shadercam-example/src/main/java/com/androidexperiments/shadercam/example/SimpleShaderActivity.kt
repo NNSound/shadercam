@@ -22,9 +22,7 @@ import com.androidexperiments.shadercam.utils.ShaderUtils
 import java.io.File
 import java.util.Arrays
 
-import butterknife.ButterKnife
-import butterknife.InjectView
-import butterknife.OnClick
+
 
 /**
  * Written by Anthony Tripaldi
@@ -37,11 +35,9 @@ open class SimpleShaderActivity : FragmentActivity(), CameraRenderer.OnRendererR
      * We inject our views from our layout xml here using [ButterKnife]
      * it didn't work so I
      */
-    @InjectView(R.id.texture_view)
-    internal var mTextureView: TextureView? = null
-    @InjectView(R.id.btn_record)
-    internal var mRecordBtn: Button? = null
-
+     internal var mTextureView: TextureView? = null
+     internal var mRecordBtn: Button? = null
+     internal var mSwapBtn: Button? = null
     /**
      * Custom fragment used for encapsulating all the [android.hardware.camera2] apis.
      */
@@ -63,6 +59,7 @@ open class SimpleShaderActivity : FragmentActivity(), CameraRenderer.OnRendererR
 
     private val videoFile: File
         get() = File(Environment.getExternalStorageDirectory(), TEST_VIDEO_FILE_NAME)
+
 
 
     /**
@@ -90,15 +87,25 @@ open class SimpleShaderActivity : FragmentActivity(), CameraRenderer.OnRendererR
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        ButterKnife.inject(this)
         mTextureView = findViewById(R.id.texture_view) as TextureView
         mRecordBtn = findViewById(R.id.btn_record) as Button
+        mSwapBtn = findViewById(R.id.btn_swap_camera) as Button
         setupCameraFragment()
         setupInteraction()
 
         //setup permissions for M or start normally
         if (PermissionsHelper.isMorHigher())
             setupPermissions()
+
+        mRecordBtn!!.setOnClickListener{
+            if (mRenderer!!.isRecording)
+                stopRecording()
+            else
+                startRecording()
+        }
+        mSwapBtn!!.setOnClickListener{
+            mCameraFragment!!.swapCamera()
+        }
     }
 
     private fun setupPermissions() {
@@ -202,19 +209,21 @@ open class SimpleShaderActivity : FragmentActivity(), CameraRenderer.OnRendererR
      * [ButterKnife] uses annotations to make setting [android.view.View.OnClickListener]'s
      * easier than ever with the [OnClick] annotation.
      */
-    @OnClick(R.id.btn_record)
-    fun onClickRecord() {
-        if (mRenderer!!.isRecording)
-            stopRecording()
 
-        else
-            startRecording()
-    }
-
-    @OnClick(R.id.btn_swap_camera)
-    fun onClickSwapCamera() {
-        mCameraFragment!!.swapCamera()
-    }
+//    @OnClick(R.id.btn_record)
+//    fun onClickRecord() {
+//        Log.e(TAG, "record")
+//        if (mRenderer!!.isRecording)
+//            stopRecording()
+//        else
+//            startRecording()
+//    }
+//
+//    @OnClick(R.id.btn_swap_camera)
+//    fun onClickSwapCamera() {
+//        Log.e(TAG, "swap")
+//        mCameraFragment!!.swapCamera()
+//    }
 
     /**
      * called whenever surface texture becomes initially available or whenever a camera restarts after
